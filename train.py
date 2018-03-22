@@ -8,18 +8,13 @@ WORD_SEPARATOR = ' '  # Const
 def clean_up(dirty_string):
     """Remove non-alphabetic symbols.
 
-    Remove all the symbols except letters of English and Russian
-    alphabet and spaces.
+    Remove all the symbols except letters and spaces.
     :param dirty_string: the string to be processed
     :return: the result of processing
     """
-    whitelist_set = set('ABCDEFGHIJKLMNOPQRSTUVWXYZ\
-    abcdefghijklmnopqrstuvwxyz\
-    АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ\
-    абвгдеёжзийклмнопрстуфхцчшщъыьэюя ')
     clean_string = ''
     for char in dirty_string:
-        if char in whitelist_set:
+        if char == ' ' or char.isalpha():
             clean_string += char
     return clean_string
 
