@@ -7,8 +7,8 @@ def create_parser():
     parser = argparse.ArgumentParser(
         prog='generator', description='creates dict.txt',
         epilog='March 2018, Lev Kovalenko')
-    # parser.add_argument("-n", "-name",
-    # counter=1, default=)  - типа команда одна и та же
+
+
     return parser
 
 
@@ -59,5 +59,5 @@ with open('book.txt', 'r') as f:
 # TODO [int | number of all pairs in text]
 # [word 1] [word 2] [int | number of such pairs]
 with open('dict.txt', 'w') as f:
-    for tup in sorted(d.items()):
+    for tup in d.items():
         f.write(tup[0] + ' ' + str(tup[1]) + '\n')
