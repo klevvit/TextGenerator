@@ -2,7 +2,6 @@ import os
 from collections import defaultdict
 
 d = defaultdict(int)
-pairCounter = 0
 WORD_SEPARATOR = ' '
 
 
@@ -30,17 +29,12 @@ def add_to_dict(word1, word2):
 
     Merge two words into one string separated by WORD_SEPARATOR.
     In dictionary d, increment value by 1 for this string key if
-    exists, create such key with value 1 otherwise. Also increments
-    pairCounter by 1.
+    exists, create such key with value 1 otherwise.
     :param word1: the first word in pair
     :param word2: the second word in pair
     """
     string_pair = word1 + ' ' + word2
-    if d.get(string_pair) is None:
-        d[string_pair] = 1
-    else:
-        d[string_pair] += 1
-    pairCounter += 1
+    d[string_pair] += 1
 
 
 with open('book.txt', 'r') as f:
