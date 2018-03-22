@@ -8,7 +8,6 @@ def create_parser():
         prog='generator', description='creates dict.txt',
         epilog='March 2018, Lev Kovalenko')
 
-
     return parser
 
 
@@ -25,8 +24,10 @@ def clean_up(dirty_string):
     """
     clean_string = ''
     for char in dirty_string:
-        if char == ' ' or char.isalpha():
+        if char.isalpha():
             clean_string += char
+        elif char.isspace():
+            clean_string += ' '
     return clean_string
 
 
@@ -47,17 +48,16 @@ with open('book.txt', 'r') as f:
     isEndOfFile = False
     line = f.readline()
     while not isEndOfFile:
-        line = clean_up(line).lower()
+        line = clean_up(line)
+        line = line.lower()
         line = line.split()
         for i in range(0, len(line) - 1):
             add_to_dict(line[i], line[i + 1])
         new_line = f.readline()
         if new_line == '':
             isEndOfFile = True
-        line = line[-1] + new_line
-# Output format:
-# TODO [int | number of all pairs in text]
-# [word 1] [word 2] [int | number of such pairs]
+        line = line[-1] + ' ' + new_line
+# Output
 with open('dict.txt', 'w') as f:
     for tup in d.items():
-        f.write(tup[0] + ' ' + str(tup[1]) + '\n')
+        f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
