@@ -1,5 +1,16 @@
 import os
 from collections import defaultdict
+import argparse
+
+
+def create_parser():
+    parser = argparse.ArgumentParser(
+        prog='generator', description='creates dict.txt',
+        epilog='March 2018, Lev Kovalenko')
+    # parser.add_argument("-n", "-name",
+    # counter=1, default=)  - типа команда одна и та же
+    return parser
+
 
 d = defaultdict(int)
 WORD_SEPARATOR = ' '  # Const
