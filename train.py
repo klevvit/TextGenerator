@@ -43,6 +43,9 @@ def process_string(dirty_string, lower, cleanup):
     Replace whitespace symbols with spaces. Optionally convert symbols to
     lowercase and/or remove all the symbols except letters and spaces.
     :param dirty_string: the string to be processed
+    :param lower: True if must convert to lowercase, False otherwise
+    :param cleanup: True if must remove non-alphabetic symbols, False
+    otherwise.
     :return: the result of processing
     """
     clean_string = ''
@@ -76,7 +79,7 @@ def read_stream(stream, lower, cleanup):
     add every word pair into dictionary. Do not close stream!
 
     :param stream: input stream
-    :param lower: True if must convert to lowercase, False otherwise.
+    :param lower: True if must convert to lowercase, False otherwise
     :param cleanup: True if must remove non-alphabetic symbols, False
     otherwise.
     """
