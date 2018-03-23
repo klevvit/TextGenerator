@@ -14,6 +14,7 @@ def create_parser():
     --model, -m         path to file for saving model
     --lc, -l            optional; convert words to lowercase
     --help, -h          default argparse help
+    :return: generated parser
     """
     p = argparse.ArgumentParser(
         description='Create model for generator.',
