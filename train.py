@@ -22,7 +22,7 @@ def create_parser():
                    help='optional; path to directory with text files (and '
                         'with NO directories!!!), read from standard input '
                         'stream if not stated')
-    p.add_argument('--model', '-m',
+    p.add_argument('--model', '-m', type=argparse.FileType('w'),
                    help='path to file for saving model')
     p.add_argument('--lc', '-l', action='store_true',
                    help='optional; convert words to lowercase')
@@ -89,20 +89,23 @@ def read_stream(stream, lc):
 # Read parameters
 parser = create_parser()
 args = parser.parse_args()
-outputPath = args.model
+input_dir = args.input_dir
 
-if args.input_dir is None:
+if input_dir is None:
     read_stream(sys.stdin, args.lc)
 else:
-    listdir = os.listdir(args.input_dir)
+    if input_dir[-1] != '/':
+        input_dir += '/'
+    listdir = os.listdir(input_dir)
     for filename in listdir:
         if filename[0] == '.':
             continue
-        f = open(args.input_dir + filename, 'r')  # TODO: bug with / in sum
+        f = open(input_dir + filename, 'r')
         read_stream(f, args.lc)
         f.close()
 
 # Output
-with open(outputPath, 'w') as f:
-    for tup in d.items():
-        f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
+f = args.model
+for tup in d.items():
+    f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
+f.close()
