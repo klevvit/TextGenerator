@@ -8,8 +8,9 @@ def create_parser():
     """Create parser
 
     Create parser with arguments:
-    --input-dir, -i     optional; path to directory with text files; read from
-                        standard input stream if not stated
+    --input-dir, -i     optional; path to directory with text files and with
+                        NO directories; read from standard input stream if
+                        not stated
     --model, -m         path to file for saving model
     --lc, -l            optional; convert words to lowercase
     --help, -h          default argparse help
@@ -18,8 +19,9 @@ def create_parser():
         description='Create model for generator.',
         epilog='March 2018, Lev Kovalenko', add_help=True)
     p.add_argument('--input-dir', '-i',
-                   help='optional; path to directory with text files; '
-                        'read from standard input stream if not stated')
+                   help='optional; path to directory with text files (and '
+                        'with NO directories!!!), read from standard input '
+                        'stream if not stated')
     p.add_argument('--model', '-m',
                    help='path to file for saving model')
     p.add_argument('--lc', '-l', action='store_true',
@@ -60,34 +62,47 @@ def add_to_dict(word1, word2):
     d[string_pair] += 1
 
 
+def read_stream(stream, lc):
+    """Add word pairs from the input stream into dictionary
+
+    Read all the text from stream, process it if necessary, split into words,
+    add every word pair into dictionary. Do not close stream!
+
+    :param stream: input stream
+    :param lc: True if must convert to lowercase, False otherwise.
+    """
+    is_end_of_stream = False
+    line = stream.readline()
+    while not is_end_of_stream:
+        line = clean_up(line)
+        if lc:
+            line = line.lower()
+        line = line.split()
+        for i in range(0, len(line) - 1):
+            add_to_dict(line[i], line[i + 1])
+        new_line = stream.readline()
+        if new_line == '':
+            is_end_of_stream = True
+        line = line[-1] + ' ' + new_line
+
+
+# Read parameters
 parser = create_parser()
 args = parser.parse_args()
+outputPath = args.model
 
-f = None
 if args.input_dir is None:
-    f = sys.stdin
+    read_stream(sys.stdin, args.lc)
 else:
-    f = open('book.txt', 'r')  # TODO: make lists of files
+    listdir = os.listdir(args.input_dir)
+    for filename in listdir:
+        if filename[0] == '.':
+            continue
+        f = open(args.input_dir + filename, 'r')  # TODO: bug with / in sum
+        read_stream(f, args.lc)
+        f.close()
 
-modelPath = args.model
-
-lowercase = args.lc
-
-isEndOfFile = False
-line = f.readline()
-while not isEndOfFile:
-    line = clean_up(line)
-    if lowercase:
-        line = line.lower()
-    line = line.split()
-    for i in range(0, len(line) - 1):
-        add_to_dict(line[i], line[i + 1])
-    new_line = f.readline()
-    if new_line == '':
-        isEndOfFile = True
-    line = line[-1] + ' ' + new_line
-f.close()
 # Output
-with open(modelPath, 'w') as f:
+with open(outputPath, 'w') as f:
     for tup in d.items():
         f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
