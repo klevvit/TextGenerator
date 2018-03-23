@@ -13,6 +13,7 @@ def create_parser():
                         not stated
     --model, -m         path to file for saving model
     --lc, -l            optional; convert words to lowercase
+    --no-cleanup, -nc   optional; do not remove non-alphabetic symbols
     --help, -h          default argparse help
     :return: generated parser
     """
@@ -27,6 +28,8 @@ def create_parser():
                    help='path to file for saving model')
     p.add_argument('--lc', '-l', action='store_true',
                    help='optional; convert words to lowercase')
+    p.add_argument('--no-cleanup', '-nc', action='store_true',
+                   help='optional; do not remove non-alphabetic symbols')
     return p
 
 
@@ -34,19 +37,22 @@ d = defaultdict(int)
 WORD_SEPARATOR = ' '  # Const
 
 
-def clean_up(dirty_string):
-    """Remove non-alphabetic symbols.
+def process_string(dirty_string, lower, cleanup):
+    """Format sting as required before the next step.
 
-    Remove all the symbols except letters and spaces.
+    Replace whitespace symbols with spaces. Optionally convert symbols to
+    lowercase and/or remove all the symbols except letters and spaces.
     :param dirty_string: the string to be processed
     :return: the result of processing
     """
     clean_string = ''
     for char in dirty_string:
-        if char.isalpha():
-            clean_string += char
-        elif char.isspace():
+        if char.isspace():
             clean_string += ' '
+        elif not cleanup or char.isalpha():
+            clean_string += char
+    if lower:
+        clean_string = clean_string.lower()
     return clean_string
 
 
@@ -63,21 +69,21 @@ def add_to_dict(word1, word2):
     d[string_pair] += 1
 
 
-def read_stream(stream, lc):
+def read_stream(stream, lower, cleanup):
     """Add word pairs from the input stream into dictionary
 
     Read all the text from stream, process it if necessary, split into words,
     add every word pair into dictionary. Do not close stream!
 
     :param stream: input stream
-    :param lc: True if must convert to lowercase, False otherwise.
+    :param lower: True if must convert to lowercase, False otherwise.
+    :param cleanup: True if must remove non-alphabetic symbols, False
+    otherwise.
     """
     is_end_of_stream = False
     line = stream.readline()
     while not is_end_of_stream:
-        line = clean_up(line)
-        if lc:
-            line = line.lower()
+        line = process_string(line, lower, cleanup)
         line = line.split()
         for i in range(0, len(line) - 1):
             add_to_dict(line[i], line[i + 1])
@@ -93,7 +99,7 @@ args = parser.parse_args()
 input_dir = args.input_dir
 
 if input_dir is None:
-    read_stream(sys.stdin, args.lc)
+    read_stream(sys.stdin, args.lc, not args.no_cleanup)
 else:
     if input_dir[-1] != '/':
         input_dir += '/'
@@ -102,7 +108,7 @@ else:
         if filename[0] == '.':
             continue
         f = open(input_dir + filename, 'r')
-        read_stream(f, args.lc)
+        read_stream(f, args.lc, not args.no_cleanup)
         f.close()
 
 # Output
