@@ -15,15 +15,15 @@ def create_parser():
     --help          default argparse help
     """
     p = argparse.ArgumentParser(
-        prog='Trainer', description='Create model for generator.',
-        epilog='March 2018, Lev Kovalenko')
-    p.add_argument('--input-dir', '-i', help='optional; path to directory with'
-                                             'text files; read from standard'
-                                             'input stream if not stated')
+        description='Create model for generator.',
+        epilog='March 2018, Lev Kovalenko', add_help=True)
+    p.add_argument('--input-dir', '-i',
+                   help='optional; path to directory with text files; '
+                        'read from standard input stream if not stated')
     p.add_argument('--model', '-m', help='path to file for saving model')
-    p.add_argument('--lc', '-l', default=None, help='optional; convert words'
-                                                    'to lowercase')
-    # TODO deal with lowercase
+    p.add_argument('--lc', '-l', nargs='?',
+                   help='optional; convert words to lowercase')
+    # TODO deal with lowercase. Now launches, but doesn't work
     return p
 
 
@@ -74,7 +74,6 @@ modelPath = args.model
 lowercase = True
 if args.lc is None:
     lowercase = False
-
 
 isEndOfFile = False
 line = f.readline()
