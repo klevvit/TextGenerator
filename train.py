@@ -8,11 +8,11 @@ def create_parser():
     """Create parser
 
     Create parser with arguments:
-    --input-dir     optional; path to directory with text files; read from
-                    standard input stream if not stated
-    --model         path to file for saving model
-    --lc            optional; convert words to lowercase
-    --help          default argparse help
+    --input-dir, -i     optional; path to directory with text files; read from
+                        standard input stream if not stated
+    --model, -m         path to file for saving model
+    --lc, -l            optional; convert words to lowercase
+    --help, -h          default argparse help
     """
     p = argparse.ArgumentParser(
         description='Create model for generator.',
@@ -20,10 +20,10 @@ def create_parser():
     p.add_argument('--input-dir', '-i',
                    help='optional; path to directory with text files; '
                         'read from standard input stream if not stated')
-    p.add_argument('--model', '-m', help='path to file for saving model')
-    p.add_argument('--lc', '-l', nargs='?',
+    p.add_argument('--model', '-m',
+                   help='path to file for saving model')
+    p.add_argument('--lc', '-l', action='store_true',
                    help='optional; convert words to lowercase')
-    # TODO deal with lowercase. Now launches, but doesn't work
     return p
 
 
@@ -71,9 +71,7 @@ else:
 
 modelPath = args.model
 
-lowercase = True
-if args.lc is None:
-    lowercase = False
+lowercase = args.lc
 
 isEndOfFile = False
 line = f.readline()
