@@ -1,3 +1,4 @@
+# coding: utf-8
 from collections import defaultdict
 import sys
 import argparse
@@ -51,36 +52,38 @@ def weighted_choice(choices):
     assert False, "Shouldn't get here"
 
 
-parser = create_parser()
-args = parser.parse_args()
-input_file = args.model
+print(__name__)
+if __name__ == '__main__':
+    parser = create_parser()
+    args = parser.parse_args()
+    input_file = args.model
 
-WORD_SEPARATOR = ' '  # Const
-d = defaultdict(list)  # Key: first_word,
-# Val = [[second_word0, quantity0], [second_word1, quantity1], ...]
+    WORD_SEPARATOR = ' '  # Const
+    d = defaultdict(list)  # Key: first_word,
+    # Val = [[second_word0, quantity0], [second_word1, quantity1], ...]
 
-line = input_file.readline()
-while line != '':
-    tup = line.split(WORD_SEPARATOR)
-    d[tup[0]].append([tup[1], int(tup[-1])])
     line = input_file.readline()
-input_file.close()
+    while line != '':
+        tup = line.split(WORD_SEPARATOR)
+        d[tup[0]].append([tup[1], int(tup[-1])])
+        line = input_file.readline()
+    input_file.close()
 
-length = args.length
-output_stream = args.output
-if output_stream is None:
-    output_stream = sys.stdout
-word = None
-if args.seed is not None:
-    word = args.seed
-    output_stream.write(word + ' ')
-    length -= 1
+    length = args.length
+    output_stream = args.output
+    if output_stream is None:
+        output_stream = sys.stdout
+    word = None
+    if args.seed is not None:
+        word = args.seed
+        output_stream.write(word + ' ')
+        length -= 1
 
-for i in range(length):
-    next_words = d.get(word)
-    if next_words is None:
-        word = random.choice(list(d.keys()))
-    else:
-        word = weighted_choice(next_words)
-    output_stream.write(word + ' ')
-output_stream.close()
+    for i in range(length):
+        next_words = d.get(word)
+        if next_words is None:
+            word = random.choice(list(d.keys()))
+        else:
+            word = weighted_choice(next_words)
+        output_stream.write(word + ' ')
+    output_stream.close()
