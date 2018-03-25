@@ -1,3 +1,4 @@
+# coding: utf-8
 import os
 import sys
 from collections import defaultdict
@@ -43,6 +44,9 @@ def process_string(dirty_string, lower, cleanup):
     Replace whitespace symbols with spaces. Optionally convert symbols to
     lowercase and/or remove all the symbols except letters and spaces.
     :param dirty_string: the string to be processed
+    :param lower: True if must convert to lowercase, False otherwise
+    :param cleanup: True if must remove non-alphabetic symbols, False
+    otherwise.
     :return: the result of processing
     """
     clean_string = ''
@@ -76,7 +80,7 @@ def read_stream(stream, lower, cleanup):
     add every word pair into dictionary. Do not close stream!
 
     :param stream: input stream
-    :param lower: True if must convert to lowercase, False otherwise.
+    :param lower: True if must convert to lowercase, False otherwise
     :param cleanup: True if must remove non-alphabetic symbols, False
     otherwise.
     """
@@ -93,26 +97,36 @@ def read_stream(stream, lower, cleanup):
         line = line[-1] + ' ' + new_line
 
 
-# Read parameters
-parser = create_parser()
-args = parser.parse_args()
-input_dir = args.input_dir
+def get_all_files(direc):
+    """Return list of paths to all files in directory and all subdirectories"""
+    list_files = []
+    listdir = os.listdir(direc)
+    for obj in listdir:
+        if os.path.isdir(direc + obj):
+            list_files.append(get_all_files(direc + obj + '/'))
+        elif os.path.isfile(direc + obj) and obj[0] != '.':
+            list_files.append(direc + obj)
+    return list_files
 
-if input_dir is None:
-    read_stream(sys.stdin, args.lc, not args.no_cleanup)
-else:
-    if input_dir[-1] != '/':
-        input_dir += '/'
-    listdir = os.listdir(input_dir)
-    for filename in listdir:
-        if filename[0] == '.':
-            continue
-        f = open(input_dir + filename, 'r')
-        read_stream(f, args.lc, not args.no_cleanup)
-        f.close()
 
-# Output
-f = args.model
-for tup in d.items():
-    f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
-f.close()
+if __name__ == '__main__':
+    # Read parameters
+    parser = create_parser()
+    args = parser.parse_args()
+    input_dir = args.input_dir
+
+    if input_dir is None:
+        read_stream(sys.stdin, args.lc, not args.no_cleanup)
+    else:
+        if input_dir[-1] != '/':
+            input_dir += '/'
+        file_list = get_all_files(input_dir)
+        for file_path in file_list:
+            f = open(file_path, 'r')
+            read_stream(f, args.lc, not args.no_cleanup)
+            f.close()
+    # Output
+    f = args.model
+    for tup in d.items():
+        f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
+    f.close()
