@@ -97,15 +97,13 @@ def read_stream(stream, lower, cleanup):
         line = line[-1] + ' ' + new_line
 
 
-def get_all_files(direc):
+def get_all_files(directory):
     """Return list of paths to all files in directory and all subdirectories"""
     list_files = []
-    listdir = os.listdir(direc)
-    for obj in listdir:
-        if os.path.isdir(direc + obj):
-            list_files.append(get_all_files(direc + obj + '/'))
-        elif os.path.isfile(direc + obj) and obj[0] != '.':
-            list_files.append(direc + obj)
+    for di, dirs, files in os.walk(directory):
+        for file in files:
+            if file[0] != '.':
+                list_files.append(str(os.path.join(di, file)))
     return list_files
 
 
@@ -118,8 +116,6 @@ if __name__ == '__main__':
     if input_dir is None:
         read_stream(sys.stdin, args.lc, not args.no_cleanup)
     else:
-        if input_dir[-1] != '/':
-            input_dir += '/'
         file_list = get_all_files(input_dir)
         for file_path in file_list:
             f = open(file_path, 'r')

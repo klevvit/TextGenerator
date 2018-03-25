@@ -52,7 +52,6 @@ def weighted_choice(choices):
     assert False, "Shouldn't get here"
 
 
-print(__name__)
 if __name__ == '__main__':
     parser = create_parser()
     args = parser.parse_args()
