@@ -15,6 +15,8 @@ def create_parser():
     --model, -m         path to file for saving model
     --lc, -l            optional; convert words to lowercase
     --no-cleanup, -nc   optional; do not remove non-alphabetic symbols
+    --frequency, -f     optional; minimal frequency of word pairs in text,
+                        thousandths of percent
     --help, -h          default argparse help
     :return: generated parser
     """
@@ -31,11 +33,15 @@ def create_parser():
                    help='optional; convert words to lowercase')
     p.add_argument('--no-cleanup', '-nc', action='store_true',
                    help='optional; do not remove non-alphabetic symbols')
+    p.add_argument('--frequency', '-f', type=int,
+                   help='optional; minimal frequency of word pairs in text, '
+                        'thousandths of percent')
     return p
 
 
-d = defaultdict(int)
-WORD_SEPARATOR = ' '  # Const
+d = defaultdict(int)    # Dict [word pair | quantity]
+s = 0                   # Pair counter (sum of all quantities)
+WORD_SEPARATOR = ' '    # Const
 
 
 def process_string(dirty_string, lower, cleanup):
@@ -69,6 +75,7 @@ def add_to_dict(word1, word2):
     :param word1: the first word in pair
     :param word2: the second word in pair
     """
+    global d
     string_pair = word1 + ' ' + word2
     d[string_pair] += 1
 
@@ -77,13 +84,14 @@ def read_stream(stream, lower, cleanup):
     """Add word pairs from the input stream into dictionary
 
     Read all the text from stream, process it if necessary, split into words,
-    add every word pair into dictionary. Do not close stream!
+    add every word pair into dictionary, increase sum s. Do not close stream!
 
     :param stream: input stream
     :param lower: True if must convert to lowercase, False otherwise
     :param cleanup: True if must remove non-alphabetic symbols, False
     otherwise.
     """
+    global s
     is_end_of_stream = False
     line = stream.readline()
     while not is_end_of_stream:
@@ -91,6 +99,7 @@ def read_stream(stream, lower, cleanup):
         line = line.split()
         for i in range(0, len(line) - 1):
             add_to_dict(line[i], line[i + 1])
+            s += 1
         new_line = stream.readline()
         if new_line == '':
             is_end_of_stream = True
@@ -123,6 +132,12 @@ if __name__ == '__main__':
             f.close()
     # Output
     f = args.model
+    if args.frequency is None:
+        check = False
+    else:
+        check = True
     for tup in d.items():
-        f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
+        if not check or tup[1] >= s*check/100000:
+            f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
     f.close()
+# TODO check -f
