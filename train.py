@@ -137,4 +137,3 @@ if __name__ == '__main__':
         if not check or tup[1] > args.min_quantity:
             f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
     f.close()
-# TODO check -f
