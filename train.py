@@ -1,4 +1,13 @@
 # coding: utf-8
+
+"""train.py: create a model using word pairs from given texts"""
+
+__author__ = 'Lev Kovalenko'
+__copyright__ = "Copyright 2018, Lev Kovalenko"
+__credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
+
+__version__ = '0.1.0'
+
 import os
 import sys
 from collections import defaultdict
@@ -6,20 +15,7 @@ import argparse
 
 
 def create_parser():
-    """Create parser
-
-    Create parser with arguments:
-    --input-dir, -i     optional; path to directory with text files and with
-                        NO directories; read from standard input stream if
-                        not stated
-    --model, -m         path to file for saving model
-    --lc, -l            optional; convert words to lowercase
-    --no-cleanup, -nc   optional; do not remove non-alphabetic symbols
-    --min-quantity, -mq optional; minimal quantity of word pairs in text
-                        for saving them to model
-    --help, -h          default argparse help
-    :return: generated parser
-    """
+    """Create parser with argparse lib"""
     p = argparse.ArgumentParser(
         description='Create model for generator.',
         epilog='March 2018, Lev Kovalenko', add_help=True)
