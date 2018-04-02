@@ -2,16 +2,16 @@
 
 """train.py: create a model using word pairs from given texts"""
 
+import os
+import sys
+from collections import defaultdict
+import argparse
+
 __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
 __version__ = '0.1.0'
-
-import os
-import sys
-from collections import defaultdict
-import argparse
 
 
 def create_parser():
