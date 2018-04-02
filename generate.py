@@ -1,26 +1,26 @@
 # coding: utf-8
-from collections import defaultdict
+
+"""generate.py: generate a word sequence using model created by train.py"""
+
+__author__ = 'Lev Kovalenko'
+__copyright__ = 'Copyright 2018, Lev Kovalenko'
+__credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
+
+__version__ = '0.1.1'
+
 import sys
+from collections import defaultdict
 import argparse
 import random
 
 
 def create_parser():
-    """Create parser
-
-    Create parser with arguments:
-    --model, -m         path to file with saved model
-    --seed, -s          optional; the first word in sequence; random word
-                        if not stated
-    --length, -l        length of sequence that will be generated
-    --output, -o        optional; path to output file; write to standard
-                        output stream if not stated
-    --help, -h          default argparse help
-    :return: generated parser
-    """
+    """Create parser with argparse lib"""
     p = argparse.ArgumentParser(
         description='Generate funny sequence of words.',
-        epilog='March 2018, Lev Kovalenko', add_help=True)
+        epilog='If the previous word has no pairs, the next word wil be '
+               'selected randomly.\n'
+               'April 2018, Lev Kovalenko', add_help=True)
     p.add_argument('--model', '-m', type=argparse.FileType('r'),
                    help='path to file with saved model')
     p.add_argument('--seed', '-s',
@@ -75,6 +75,8 @@ if __name__ == '__main__':
     word = None
     if args.seed is not None:
         word = args.seed
+        if d.get(word) is None:
+            raise KeyError
         output_stream.write(word + ' ')
         length -= 1
 
