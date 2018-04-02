@@ -2,16 +2,16 @@
 
 """generate.py: generate a word sequence using model created by train.py"""
 
+import sys
+from collections import defaultdict
+import argparse
+import random
+
 __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
 __version__ = '0.1.1'
-
-import sys
-from collections import defaultdict
-import argparse
-import random
 
 
 def create_parser():
