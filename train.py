@@ -96,7 +96,10 @@ def read_stream(stream, lower, cleanup):
         new_line = stream.readline()
         if new_line == '':
             is_end_of_stream = True
-        line = line[-1] + ' ' + new_line
+        if not line:
+            line = new_line
+        else:
+            line = line[-1] + ' ' + new_line
 
 
 def get_all_files(directory):
