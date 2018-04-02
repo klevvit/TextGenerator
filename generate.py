@@ -6,7 +6,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 import sys
 from collections import defaultdict
@@ -18,7 +18,9 @@ def create_parser():
     """Create parser with argparse lib"""
     p = argparse.ArgumentParser(
         description='Generate funny sequence of words.',
-        epilog='March 2018, Lev Kovalenko', add_help=True)
+        epilog='If the previous word has no pairs, the next word wil be '
+               'selected randomly.\n'
+               'April 2018, Lev Kovalenko', add_help=True)
     p.add_argument('--model', '-m', type=argparse.FileType('r'),
                    help='path to file with saved model')
     p.add_argument('--seed', '-s',
