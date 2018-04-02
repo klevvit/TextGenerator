@@ -75,7 +75,7 @@ if __name__ == '__main__':
     word = None
     if args.seed is not None:
         word = args.seed
-        if d.get(word) is None:
+        if d.get(word) is None and word != tup[1]:
             raise KeyError
         output_stream.write(word + ' ')
         length -= 1
