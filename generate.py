@@ -11,7 +11,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.1'
+__version__ = '0.1.3'
 
 
 def create_parser():

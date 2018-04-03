@@ -4,14 +4,14 @@
 
 import os
 import sys
-from collections import defaultdict
+from collections import OrderedDict
 import argparse
 
 __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.0'
+__version__ = '0.1.3'
 
 
 def create_parser():
@@ -35,7 +35,7 @@ def create_parser():
     return p
 
 
-d = defaultdict(int)    # Dict [word pair | quantity]
+d = OrderedDict()       # Dict [word pair | quantity]
 WORD_SEPARATOR = ' '    # Const
 
 
@@ -72,7 +72,10 @@ def add_to_dict(word1, word2):
     """
     global d
     string_pair = word1 + ' ' + word2
-    d[string_pair] += 1
+    if d.get(string_pair) is None:
+        d[string_pair] = 1
+    else:
+        d[string_pair] += 1
 
 
 def read_stream(stream, lower, cleanup):
