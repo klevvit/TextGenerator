@@ -11,7 +11,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 
 def create_parser():
@@ -35,7 +35,9 @@ def create_parser():
     return p
 
 
-d = defaultdict(int)    # Dict [word pair | quantity]
+# TODO хз что это, мб сработает
+d = defaultdict(lambda: defaultdict(int))    # Key: first_word,
+#  Val: {Key: second_word, Val: quantity1}
 WORD_SEPARATOR = ' '    # Const
 
 
@@ -70,7 +72,7 @@ def add_to_dict(word1, word2):
     :param word1: the first word in pair
     :param word2: the second word in pair
     """
-    global d
+    global d  # TODO
     string_pair = word1 + ' ' + word2
     d[string_pair] += 1
 
@@ -132,6 +134,7 @@ if __name__ == '__main__':
         check = False
     else:
         check = True
+    global d  # TODO
     for tup in d.items():
         if not check or tup[1] > args.min_quantity:
             f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))

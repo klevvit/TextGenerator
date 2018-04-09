@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     WORD_SEPARATOR = ' '  # Const
     d = defaultdict(list)  # Key: first_word,
-    # Val = [[second_word0, quantity0], [second_word1, quantity1], ...]
+    # Val: [[second_word0, quantity0], [second_word1, quantity1], ...]
 
     line = input_file.readline()
     while line != '':
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     word = None
     if args.seed is not None:
         word = args.seed
-        if d.get(word) is None and word != tup[1]:
+        if d.get(word) is None and word != tup[1]:  # TODO
             raise KeyError
         output_stream.write(word + ' ')
         length -= 1
