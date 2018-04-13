@@ -6,12 +6,13 @@ import os
 import sys
 from collections import defaultdict
 import argparse
+import json
 
 __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 
 def create_parser():
@@ -72,9 +73,11 @@ def add_to_dict(word1, word2):
     :param word1: the first word in pair
     :param word2: the second word in pair
     """
-    global d  # TODO
-    string_pair = word1 + ' ' + word2
-    d[string_pair] += 1
+    global d
+    if word2 is None:
+        d[word1]  # just create first word if not exists
+    else:
+        d[word1][word2] += 1
 
 
 def read_stream(stream, lower, cleanup):
@@ -94,6 +97,7 @@ def read_stream(stream, lower, cleanup):
         line = process_string(line, lower, cleanup)
         line = line.split()
         for i in range(0, len(line) - 1):
+            pass
             add_to_dict(line[i], line[i + 1])
         new_line = stream.readline()
         if new_line == '':
@@ -102,6 +106,22 @@ def read_stream(stream, lower, cleanup):
             line = new_line
         else:
             line = line[-1] + ' ' + new_line
+    add_to_dict(line.replace(' ', ''), None)
+    
+
+def write_model(output_stream, min_quantity):
+    """Remove rare pairs and write model into output_stream
+
+    Remove second words with quantity less than min_quantity and write model
+    into output_stream.
+    """
+
+    if min_quantity is not None and min_quantity > 1:
+        for word1, words2 in d.items():
+            for word, quantity in words2:
+                if quantity < min_quantity:
+                    words2.pop(word)
+    json.dump(d, output_stream, ensure_ascii=False, separators=(',', ':'))
 
 
 def get_all_files(directory):
@@ -130,12 +150,5 @@ if __name__ == '__main__':
             f.close()
     # Output
     f = args.model
-    if args.min_quantity is None:
-        check = False
-    else:
-        check = True
-    global d  # TODO
-    for tup in d.items():
-        if not check or tup[1] > args.min_quantity:
-            f.write('{words} {num}\n'.format(words=tup[0], num=tup[1]))
+    write_model(f, args.min_quantity)
     f.close()
