@@ -11,7 +11,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 
 def create_parser():
@@ -42,7 +42,7 @@ def weighted_choice(choices):
     :param choices: list of pairs [element, weight]
     :return: random element
     """
-    total = sum(w for c, w in choices)  # todo bug
+    total = sum(w for c, w in choices)
     r = random.uniform(0, total)
     upto = 0
     for c, w in choices:
@@ -85,6 +85,6 @@ if __name__ == '__main__':
         if not next_words:
             word = random.choice(list(d.keys()))
         else:
-            word = weighted_choice(next_words)
+            word = weighted_choice(next_words.items())
         output_stream.write(word + ' ')
     output_stream.close()
