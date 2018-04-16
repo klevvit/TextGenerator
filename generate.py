@@ -11,7 +11,9 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
+
+WORD_SEPARATOR = ' '  # Const
 
 
 def create_parser():
@@ -57,15 +59,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     input_file = args.model
 
-    WORD_SEPARATOR = ' '  # Const
-    d = json.load(input_file)   # Key: first_word,
-    #  Val: {Key: second_word, Val: quantity1}
-
-    line = input_file.readline()
-    while line != '':
-        tup = line.split(WORD_SEPARATOR)
-        d[tup[0]].append([tup[1], int(tup[-1])])
-        line = input_file.readline()
+    d = json.load(input_file)
+    # Key: first_word,  Val: {Key: second_word, Val: quantity1}
     input_file.close()
 
     length = args.length
