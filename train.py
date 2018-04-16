@@ -13,7 +13,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 
 def create_parser():
@@ -106,9 +106,13 @@ def write_model(output_stream, min_quantity):
 
     if min_quantity is not None and min_quantity > 1:
         for word1, words2 in d.items():
-            for word, quantity in words2:
+            # write all we want to delete into list
+            list_to_del = []
+            for word, quantity in words2.items():
                 if quantity < min_quantity:
-                    words2.pop(word)
+                    list_to_del.append(word)
+            for word in list_to_del:
+                words2.pop(word)
     json.dump(d, output_stream, ensure_ascii=False, separators=(',', ':'))
 
 
