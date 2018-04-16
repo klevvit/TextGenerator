@@ -7,12 +7,13 @@ import sys
 from collections import defaultdict
 import argparse
 import json
+import re
 
 __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.2'
+__version__ = '0.1.4'
 
 
 def create_parser():
@@ -36,29 +37,25 @@ def create_parser():
     return p
 
 
-# TODO хз что это, мб сработает
-d = defaultdict(lambda: defaultdict(int))    # Key: first_word,
+d = defaultdict(lambda: defaultdict(int))  # Key: first_word,
 #  Val: {Key: second_word, Val: quantity1}
-WORD_SEPARATOR = ' '    # Const
+WORD_SEPARATOR = ' '  # Const
 
 
 def process_string(dirty_string, lower, cleanup):
     """Format sting as required before the next step.
 
     Replace whitespace symbols with spaces. Optionally convert symbols to
-    lowercase and/or remove all the symbols except letters and spaces.
+    lowercase and/or remove all symbols except letters, digits and spaces.
     :param dirty_string: the string to be processed
     :param lower: True if must convert to lowercase, False otherwise
     :param cleanup: True if must remove non-alphabetic symbols, False
     otherwise.
     :return: the result of processing
     """
-    clean_string = ''
-    for char in dirty_string:
-        if char.isspace():
-            clean_string += ' '
-        elif not cleanup or char.isalpha():
-            clean_string += char
+    clean_string = re.sub(r'\s+', ' ', dirty_string)  # replace whitespace
+    if cleanup:
+        clean_string = re.sub(r'[^ \w]', '', dirty_string)
     if lower:
         clean_string = clean_string.lower()
     return clean_string
@@ -91,23 +88,14 @@ def read_stream(stream, lower, cleanup):
     :param cleanup: True if must remove non-alphabetic symbols, False
     otherwise.
     """
-    is_end_of_stream = False
-    line = stream.readline()
-    while not is_end_of_stream:
-        line = process_string(line, lower, cleanup)
-        line = line.split()
-        for i in range(0, len(line) - 1):
-            pass
-            add_to_dict(line[i], line[i + 1])
-        new_line = stream.readline()
-        if new_line == '':
-            is_end_of_stream = True
-        if not line:
-            line = new_line
-        else:
-            line = line[-1] + ' ' + new_line
-    add_to_dict(line.replace(' ', ''), None)
-    
+    words = []
+    for line in stream:
+        words += process_string(line, lower, cleanup).split()
+        for i in range(0, len(words) - 1):
+            add_to_dict(words[i], words[i + 1])  # TODO make adding without for
+        words = [words[-1]]
+    add_to_dict(words[0], None)  # last word in stream
+
 
 def write_model(output_stream, min_quantity):
     """Remove rare pairs and write model into output_stream
