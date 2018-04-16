@@ -16,6 +16,18 @@ __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 __version__ = '0.1.5'
 
 
+import time
+
+
+def time_measure(func):
+    def wrapper(*args, **kwargs):
+        t = time.clock()
+        res = func(*args, **kwargs)
+        print(func.__name__ + ':', time.clock() - t)
+        return res
+    return wrapper
+
+
 def create_parser():
     """Create parser with argparse lib"""
     p = argparse.ArgumentParser(
@@ -127,7 +139,8 @@ def get_all_files(directory):
     return list_files
 
 
-if __name__ == '__main__':
+@time_measure
+def train():
     # Read parameters
     parser = create_parser()
     args = parser.parse_args()
@@ -145,3 +158,7 @@ if __name__ == '__main__':
     f = args.model
     write_model(f, args.min_quantity)
     f.close()
+
+
+if __name__ == '__main__':
+    train()
