@@ -37,9 +37,10 @@ def create_parser():
     return p
 
 
-d = defaultdict(lambda: defaultdict(int))  # Key: first_word,
-#  Val: {Key: second_word, Val: quantity1}
 WORD_SEPARATOR = ' '  # Const
+
+d = defaultdict(lambda: defaultdict(int))
+# Key: first_word, Val: {Key: second_word, Val: quantity1}
 
 
 def process_string(dirty_string, lower, cleanup):
