@@ -12,7 +12,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
 WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 
@@ -43,7 +43,7 @@ def weighted_choice(choices):
     Select random element from the list where each element
     has its own probability of being selected
     :param choices: list of pairs [element, weight]
-    :return: random element
+    :return: random element; None if list is empty
     """
     total = sum(w for c, w in choices)
     r = random.uniform(0, total)
@@ -52,7 +52,7 @@ def weighted_choice(choices):
         if upto + w >= r:
             return c
         upto += w
-    assert False, "Shouldn't get here"
+    return None  # for an empty list
 
 
 if __name__ == '__main__':
