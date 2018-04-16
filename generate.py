@@ -6,14 +6,15 @@ import sys
 import argparse
 import random
 import json
+import train
 
 __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
-WORD_SEPARATOR = ' '  # Const
+WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 
 
 def create_parser():
