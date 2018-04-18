@@ -12,7 +12,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
 WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 
@@ -82,5 +82,5 @@ if __name__ == '__main__':
             word = random.choice(list(model.keys()))
         else:
             word = weighted_choice(next_words.items())
-        output_stream.write(word + ' ')
+        output_stream.write('{} '.format(word))
     output_stream.close()
