@@ -13,12 +13,10 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
-
+# TODO: remove
 import time
-
-
 def time_measure(func):
     def wrapper(*args, **kwargs):
         t = time.clock()
@@ -51,7 +49,7 @@ def create_parser():
 
 WORD_SEPARATOR = ' '  # Const
 
-d = defaultdict(lambda: defaultdict(int))
+model = defaultdict(lambda: defaultdict(int))
 # Key: first_word, Val: {Key: second_word, Val: quantity1}
 
 
@@ -75,26 +73,26 @@ def process_string(dirty_string, lower, cleanup):
 
 
 def add_to_dict(word1, word2):
-    """Add the word pair to the dictionary
+    """Add the word pair to the model
 
-    Merge two words into one string separated by WORD_SEPARATOR.
-    In dictionary d, increment value by 1 for this string key if
-    exists, create such key with value 1 otherwise.
+    In dictionary model, increment value of [word1][word2] by 1 for this string
+    pair if exists, create with value 1 otherwise. If word2 is None, just add
+    word1 into model with empty dictionary key if model[word1] doesn't exist.
     :param word1: the first word in pair
-    :param word2: the second word in pair
+    :param word2: the second word in pair or None
     """
-    global d
+    global model
     if word2 is None:
-        d[word1]  # just create first word if not exists
+        model[word1]  # just create first word if not exists
     else:
-        d[word1][word2] += 1
+        model[word1][word2] += 1
 
 
 def read_stream(stream, lower, cleanup):
-    """Add word pairs from the input stream into dictionary
+    """Add word pairs from the input stream into model
 
     Read all the text from stream, process it if necessary, split into words,
-    add every word pair into dictionary. Do not close stream!
+    add every word pair into model. Do not close stream!
 
     :param stream: input stream
     :param lower: True if must convert to lowercase, False otherwise
@@ -106,8 +104,9 @@ def read_stream(stream, lower, cleanup):
         words += process_string(line, lower, cleanup).split()
         for i in range(0, len(words) - 1):
             add_to_dict(words[i], words[i + 1])  # TODO make adding without for
+                                                 # but how?
         words = [words[-1]]
-    add_to_dict(words[0], None)  # last word in stream
+    add_to_dict(words[0], None)  # add last word from stream if has no pairs
 
 
 def write_model(output_stream, min_quantity):
@@ -118,7 +117,7 @@ def write_model(output_stream, min_quantity):
     """
 
     if min_quantity is not None and min_quantity > 1:
-        for word1, words2 in d.items():
+        for word1, words2 in model.items():
             # write all we want to delete into list
             list_to_del = []
             for word, quantity in words2.items():
@@ -126,7 +125,7 @@ def write_model(output_stream, min_quantity):
                     list_to_del.append(word)
             for word in list_to_del:
                 words2.pop(word)
-    json.dump(d, output_stream, ensure_ascii=False, separators=(',', ':'))
+    json.dump(model, output_stream, ensure_ascii=False, separators=(',', ':'))
 
 
 def get_all_files(directory):

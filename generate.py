@@ -12,7 +12,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 
 WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     input_file = args.model
 
-    d = json.load(input_file)
+    model = json.load(input_file)
     # Key: first_word,  Val: {Key: second_word, Val: quantity1}
     input_file.close()
 
@@ -71,15 +71,15 @@ if __name__ == '__main__':
     word = None
     if args.seed is not None:
         word = args.seed
-        if d.get(word) is None:
+        if model.get(word) is None:
             raise KeyError('No such word in texts')
         output_stream.write(word + ' ')
         length -= 1
 
     for i in range(length):
-        next_words = d.get(word)
+        next_words = model.get(word)
         if not next_words:
-            word = random.choice(list(d.keys()))
+            word = random.choice(list(model.keys()))
         else:
             word = weighted_choice(next_words.items())
         output_stream.write(word + ' ')
