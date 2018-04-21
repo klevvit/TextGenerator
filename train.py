@@ -1,6 +1,9 @@
 # coding: utf-8
-
-"""train.py: create a model using word pairs from given texts"""
+"""train.py: create a model using word pairs from given texts.
+Reads given text files, then creates a model file that contains all pairs of
+words from the texts with quantities of their occurrences. The model file can
+be used later in generate.py to create a sequence of words where all adjacent
+words are related in sense (read more in generate.py help)."""
 
 import os
 import sys
@@ -8,15 +11,16 @@ from collections import defaultdict
 import argparse
 import json
 import re
+import time
 
 __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 
-# TODO: remove
-import time
+
+# TODO: add param to functions
 def time_measure(func):
     def wrapper(*args, **kwargs):
         t = time.clock()
@@ -29,21 +33,26 @@ def time_measure(func):
 def create_parser():
     """Create parser with argparse lib"""
     p = argparse.ArgumentParser(
-        description='Create model for generator.',
-        epilog='March 2018, Lev Kovalenko', add_help=True)
+        description='''This program reads given text files, then creates a 
+        model file that contains all pairs of words from the texts with 
+        quantities of their occurrences. The model file can be used later in 
+        generate.py to create a sequence of words where all adjacent words are 
+        related in sense (read more in generate.py help).''',
+        epilog='April 2018, Lev Kovalenko', add_help=True)
     p.add_argument('--input-dir', '-i',
-                   help='optional; path to directory with text files (and '
-                        'with NO directories!!!), read from standard input '
-                        'stream if not stated')
+                   help='optional; path to directory with TEXT FILES ONLY, '
+                        'it may contain subdirectories with text files; '
+                        'read from standard input stream if not stated')
     p.add_argument('--model', '-m', type=argparse.FileType('w'),
-                   help='path to file for saving model')
+                   help='path to file for saving model; if file exists, it '
+                        'will be overwritten')
     p.add_argument('--lc', '-l', action='store_true',
                    help='optional; convert words to lowercase')
     p.add_argument('--no-cleanup', '-nc', action='store_true',
-                   help='optional; do not remove non-alphabetic symbols')
+                   help='optional; do not resmove non-alphabetic symbols')
     p.add_argument('--min-quantity', '-mq', type=int,
-                   help='optional; minimal quantity of word pairs in text '
-                        'for saving them to model')
+                   help='optional; minimal quantity of word pairs in all '
+                        'texts for saving them to the model')
     return p
 
 
@@ -62,7 +71,7 @@ def process_string(dirty_string, lower, cleanup):
     :param lower: True if must convert to lowercase, False otherwise
     :param cleanup: True if must remove non-alphabetic symbols, False
     otherwise.
-    :return: the result of processing
+    :return: a processed string
     """
     clean_string = re.sub(r'\s+', ' ', dirty_string)  # replace whitespace
     if cleanup:
