@@ -11,33 +11,32 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.9'
+__version__ = '0.1.10'
 
 WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 
 
 def create_parser():
     """Create parser with argparse lib"""
-    p = argparse.ArgumentParser(
-        description='Generate funny sequence of words.',
-        epilog='If the previous word has no pairs, the next word wil be '
-               'selected randomly.\n'
-               'April 2018, Lev Kovalenko', add_help=True)
-    p.add_argument('--model', '-m', type=argparse.FileType('r'),
-                   help='path to the file with saved model; use train.py to '
-                        'generate a model')
-    p.add_argument('--seed', '-s',
-                   help='optional; the first word in sequence, must be '
+    parser = argparse.ArgumentParser(
+        description='Generate funny sequence of words. If the previous word '
+                    'has no pairs, the next word wil be selected randomly.',
+        epilog='April 2018, Lev Kovalenko', add_help=True)
+    parser.add_argument('--model', '-m', type=argparse.FileType('r'),
+                        help='path to the file with saved model; use train.py '
+                             'to generate a model')
+    parser.add_argument('--seed', '-s',
+                        help='optional; the first word in sequence, must be '
                         'the word that exists at least in one of the texts, '
                         'with required format if it was set for generation of '
                         'the model (lowercase, with non-alphabet symbols, '
                         'etc.); random word from all the texts if not stated.')
-    p.add_argument('--length', '-l', type=int,
-                   help='length of sequence that will be generated')
-    p.add_argument('--output', '-o', type=argparse.FileType('w'),
-                   help='optional; path to output file; write to standard '
-                        'output stream if not stated')
-    return p
+    parser.add_argument('--length', '-l', type=int,
+                        help='length of sequence that will be generated')
+    parser.add_argument('--output', '-o', type=argparse.FileType('w'),
+                        help='optional; path to output file; write to '
+                             'standard output stream if not stated')
+    return parser
 
 
 def weighted_choice(choices):
@@ -48,13 +47,13 @@ def weighted_choice(choices):
     :param choices: list of pairs [element, weight]
     :return: random element; None if list is empty
     """
-    total = sum(w for c, w in choices)
-    r = random.uniform(0, total)
+    total = sum(weight for choice, weight in choices)
+    rand = random.uniform(0, total)
     upto = 0
-    for c, w in choices:
-        if upto + w >= r:
-            return c
-        upto += w
+    for choice, weight in choices:
+        if upto + weight >= rand:
+            return choice
+        upto += weight
     return None  # for an empty list
 
 
