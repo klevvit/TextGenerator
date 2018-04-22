@@ -17,7 +17,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 
 
 # TODO: add param to functions
@@ -28,6 +28,12 @@ def time_measure(func):
         print(func.__name__ + ':', time.clock() - t)
         return res
     return wrapper
+
+
+WORD_SEPARATOR = ' '  # Const
+
+model = defaultdict(lambda: defaultdict(int))
+# Key: first_word, Val: {Key: second_word, Val: quantity1}
 
 
 def create_parser():
@@ -57,27 +63,32 @@ def create_parser():
     return parser
 
 
-WORD_SEPARATOR = ' '  # Const
+class Params:
+    """Parameters for word processing; made for convenient passing arguments"""
+    lower = None
+    cleanup = None
 
-model = defaultdict(lambda: defaultdict(int))
-# Key: first_word, Val: {Key: second_word, Val: quantity1}
+    def __init__(self, parser_args):
+        self.lower = parser_args.lc
+        self.cleanup = not parser_args.no_cleanup
 
 
-def process_string(dirty_string, lower, cleanup):
+def process_string(dirty_string, params):
     """Format sting as required before the next step.
 
     Replace whitespace symbols with spaces. Optionally convert symbols to
     lowercase and/or remove all symbols except letters, digits and spaces.
     :param dirty_string: the string to be processed
-    :param lower: True if must convert to lowercase, False otherwise
-    :param cleanup: True if must remove non-alphabetic symbols, False
-    otherwise.
+    :param params: Params class with values of lower and cleanup;
+    lower: True if must convert to lowercase, False otherwise;
+    cleanup: True if must remove non-alphabetic symbols, False
+    otherwise
     :return: a processed string
     """
     clean_string = re.sub(r'\s+', ' ', dirty_string)  # replace whitespace
-    if cleanup:
+    if params.cleanup:
         clean_string = re.sub(r'[^ \w]', '', dirty_string)
-    if lower:
+    if params.lower:
         clean_string = clean_string.lower()
     return clean_string
 
@@ -98,20 +109,23 @@ def add_to_dict(word1, word2):
         model[word1][word2] += 1
 
 
-def read_stream(stream, lower, cleanup):
+def read_stream(stream, params):
     """Add word pairs from the input stream into model
 
     Read all the text from stream, process it if necessary, split into words,
     add every word pair into model. Do not close stream!
 
     :param stream: input stream
-    :param lower: True if must convert to lowercase, False otherwise
-    :param cleanup: True if must remove non-alphabetic symbols, False
+    :param params: Params class with non-None values of lower and cleanup;
+    lower: True if must convert to lowercase, False otherwise;
+    cleanup: True if must remove non-alphabetic symbols, False
     otherwise.
     """
+    if params.lower is None or params.cleanup is None:
+        raise TypeError('At least one of the variables in params is None')
     words = []
     for line in stream:
-        words += process_string(line, lower, cleanup).split()
+        words += process_string(line, params).split()
         for i in range(0, len(words) - 1):
             add_to_dict(words[i], words[i + 1])  # TODO make adding without for
                                                  # but how?
@@ -152,14 +166,15 @@ def train():
     # Read parameters
     args = create_parser().parse_args()
     input_dir = args.input_dir
+    params = Params(args)
 
     if input_dir is None:
-        read_stream(sys.stdin, args.lc, not args.no_cleanup)
+        read_stream(sys.stdin, params)
     else:
         file_list = get_all_files(input_dir)
         for file_path in file_list:
             with open(file_path, 'r') as file:
-                read_stream(file, args.lc, not args.no_cleanup)
+                read_stream(file, params)
     # Output
     with args.model as file:
         write_model(file, args.min_quantity)
