@@ -17,7 +17,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
 
 # TODO: add param to functions
@@ -32,28 +32,29 @@ def time_measure(func):
 
 def create_parser():
     """Create parser with argparse lib"""
-    p = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
         description='''This program reads given text files, then creates a 
         model file that contains all pairs of words from the texts with 
         quantities of their occurrences. The model file can be used later in 
         generate.py to create a sequence of words where all adjacent words are 
         related in sense (read more in generate.py help).''',
         epilog='April 2018, Lev Kovalenko', add_help=True)
-    p.add_argument('--input-dir', '-i',
-                   help='optional; path to directory with TEXT FILES ONLY, '
-                        'it may contain subdirectories with text files; '
-                        'read from standard input stream if not stated')
-    p.add_argument('--model', '-m', type=argparse.FileType('w'),
-                   help='path to file for saving model; if file exists, it '
-                        'will be overwritten')
-    p.add_argument('--lc', '-l', action='store_true',
-                   help='optional; convert words to lowercase')
-    p.add_argument('--no-cleanup', '-nc', action='store_true',
-                   help='optional; do not resmove non-alphabetic symbols')
-    p.add_argument('--min-quantity', '-mq', type=int,
-                   help='optional; minimal quantity of word pairs in all '
+    parser.add_argument('--input-dir', '-i',
+                        help='optional; path to directory with TEXT FILES '
+                             'ONLY, it may contain subdirectories with text '
+                             'files; read from standard input stream if '
+                             'not stated')
+    parser.add_argument('--model', '-m', type=argparse.FileType('w'),
+                        help='path to file for saving model; if file exists, '
+                             'it will be overwritten')
+    parser.add_argument('--lc', '-l', action='store_true',
+                        help='optional; convert words to lowercase')
+    parser.add_argument('--no-cleanup', '-nc', action='store_true',
+                        help='optional; do not remove non-alphabetic symbols')
+    parser.add_argument('--min-quantity', '-mq', type=int,
+                        help='optional; minimal quantity of word pairs in all '
                         'texts for saving them to the model')
-    return p
+    return parser
 
 
 WORD_SEPARATOR = ' '  # Const
@@ -147,11 +148,9 @@ def get_all_files(directory):
     return list_files
 
 
-@time_measure
 def train():
     # Read parameters
-    parser = create_parser()
-    args = parser.parse_args()
+    args = create_parser().parse_args()
     input_dir = args.input_dir
 
     if input_dir is None:
@@ -159,13 +158,11 @@ def train():
     else:
         file_list = get_all_files(input_dir)
         for file_path in file_list:
-            f = open(file_path, 'r')
-            read_stream(f, args.lc, not args.no_cleanup)
-            f.close()
+            with open(file_path, 'r') as file:
+                read_stream(file, args.lc, not args.no_cleanup)
     # Output
-    f = args.model
-    write_model(f, args.min_quantity)
-    f.close()
+    with args.model as file:
+        write_model(file, args.min_quantity)
 
 
 if __name__ == '__main__':
