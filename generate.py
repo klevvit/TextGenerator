@@ -8,17 +8,17 @@ that go after the previous in texts; and here the quantity of appearances
 after that word is taken into account. If the previous word has no pairs, the
 next one wil be selected randomly, like if it would be the first one."""
 
+__author__ = 'Lev Kovalenko'
+__copyright__ = 'Copyright 2018, Lev Kovalenko'
+__credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
+
+__version__ = '0.1.12'
+
 import sys
 import argparse
 import random
 import json
 import train
-
-__author__ = 'Lev Kovalenko'
-__copyright__ = 'Copyright 2018, Lev Kovalenko'
-__credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
-
-__version__ = '0.1.11'
 
 WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 

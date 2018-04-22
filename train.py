@@ -5,6 +5,12 @@ words from the texts with quantities of their occurrences. The model file can
 be used later in generate.py to create a sequence of words where all adjacent
 words are related in sense (read more in generate.py help)."""
 
+__author__ = 'Lev Kovalenko'
+__copyright__ = "Copyright 2018, Lev Kovalenko"
+__credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
+
+__version__ = '0.1.10'
+
 import os
 import sys
 from collections import defaultdict
@@ -12,12 +18,6 @@ import argparse
 import json
 import re
 import time
-
-__author__ = 'Lev Kovalenko'
-__copyright__ = "Copyright 2018, Lev Kovalenko"
-__credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
-
-__version__ = '0.1.9'
 
 
 # TODO: add param to functions
