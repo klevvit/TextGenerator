@@ -56,7 +56,7 @@ def create_parser():
     parser.add_argument('--lc', '-l', action='store_true',
                         help='optional; convert words to lowercase')
     parser.add_argument('--no-cleanup', '-nc', action='store_true',
-                        help='optional; do not remove non-alphabetic symbols')
+                        help='optional; do not remove non-alphabetical symbols')
     parser.add_argument('--min-quantity', '-mq', type=int,
                         help='optional; minimal quantity of word pairs in all '
                         'texts for saving them to the model')
@@ -81,7 +81,7 @@ def process_string(dirty_string, params):
     :param dirty_string: the string to be processed
     :param params: Params class with values of lower and cleanup;
     lower: True if must convert to lowercase, False otherwise;
-    cleanup: True if must remove non-alphabetic symbols, False
+    cleanup: True if must remove non-alphabetical symbols, False
     otherwise
     :return: a processed string
     """
@@ -118,7 +118,7 @@ def read_stream(stream, params):
     :param stream: input stream
     :param params: Params class with non-None values of lower and cleanup;
     lower: True if must convert to lowercase, False otherwise;
-    cleanup: True if must remove non-alphabetic symbols, False
+    cleanup: True if must remove non-alphabetical symbols, False
     otherwise.
     """
     if params.lower is None or params.cleanup is None:
