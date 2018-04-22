@@ -1,5 +1,12 @@
 # coding: utf-8
-"""generate.py: generate a word sequence using model created by train.py"""
+"""generate.py: generate a word sequence using model created by train.py
+Reads given model file (you can generate it with train.py) and creates a
+sequence of words. If the seed was not stated, the first word is a random one
+from the texts; all words have equal chances to be the first, no matter how
+often they have appeared in the texts. Every next word is one of the words
+that go after the previous in texts; and here the quantity of appearances
+after that word is taken into account. If the previous word has no pairs, the
+next one wil be selected randomly, like if it would be the first one."""
 
 import sys
 import argparse
@@ -11,7 +18,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.10'
+__version__ = '0.1.11'
 
 WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 
@@ -19,22 +26,30 @@ WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 def create_parser():
     """Create parser with argparse lib"""
     parser = argparse.ArgumentParser(
-        description='Generate funny sequence of words. If the previous word '
-                    'has no pairs, the next word wil be selected randomly.',
+        description='''This program reads given model file (you can generate 
+        it with train.py) and creates a sequence of words. If the seed was not 
+        stated, the first word is a random one from the texts; all words have 
+        equal chances to be the first, no matter how often they have appeared 
+        in the texts. Every next word is one of the words that go after the 
+        previous one in texts; and here the quantity of appearances after that 
+        word is taken into account. If the previous word has no pairs, the 
+        next one wil be selected randomly, like if it would be the first 
+        one.''',
         epilog='April 2018, Lev Kovalenko', add_help=True)
     parser.add_argument('--model', '-m', type=argparse.FileType('r'),
-                        help='path to the file with saved model; use train.py '
+                        help='path to the model file; use train.py '
                              'to generate a model')
     parser.add_argument('--seed', '-s',
                         help='optional; the first word in sequence, must be '
                         'the word that exists at least in one of the texts, '
                         'with required format if it was set for generation of '
-                        'the model (lowercase, with non-alphabet symbols, '
+                        'the model (lowercase, with non-alphabetical symbols, '
                         'etc.); random word from all the texts if not stated.')
     parser.add_argument('--length', '-l', type=int,
-                        help='length of sequence that will be generated')
+                        help='length of the sequence that will be generated')
     parser.add_argument('--output', '-o', type=argparse.FileType('w'),
-                        help='optional; path to output file; write to '
+                        help='optional; path to the output file; if file '
+                             'exists, it will be overwritten; write to '
                              'standard output stream if not stated')
     return parser
 
