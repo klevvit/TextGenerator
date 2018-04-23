@@ -9,7 +9,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.10'
+__version__ = '0.2.0'
 
 import os
 import sys
@@ -27,12 +27,15 @@ def time_measure(func):
         res = func(*args, **kwargs)
         print(func.__name__ + ':', time.clock() - t)
         return res
+
     return wrapper
 
 
 WORD_SEPARATOR = ' '  # Const
 
 model = defaultdict(lambda: defaultdict(int))
+
+
 # Key: first_word, Val: {Key: second_word, Val: quantity1}
 
 
@@ -59,7 +62,7 @@ def create_parser():
                         help='optional; do not remove non-alphabetical symbols')
     parser.add_argument('--min-quantity', '-mq', type=int,
                         help='optional; minimal quantity of word pairs in all '
-                        'texts for saving them to the model')
+                             'texts for saving them to the model')
     return parser
 
 
@@ -129,6 +132,7 @@ def read_stream(stream, params):
         for i in range(0, len(words) - 1):
             add_to_dict(words[i], words[i + 1])  # TODO make adding without for
                                                  # but how?
+            # TODO PyCharm underlines this comment ^^^^^^^ Why, Ks'usha?
         words = [words[-1]]
     add_to_dict(words[0], None)  # add last word from stream if has no pairs
 
@@ -139,16 +143,22 @@ def write_model(output_stream, min_quantity):
     Remove second words with quantity less than min_quantity and write model
     into output_stream.
     """
-
+    global model
     if min_quantity is not None and min_quantity > 1:
+
+        # model = {pairs[0]: {
+        #         (None if item[1] < min_quantity else item[0]): item[1]
+        #         for item in pairs[1].items()} for pairs in model.items()}
+        # TODO ^^^^^^^^^^^^^^ that is slower, I've measured time on Tolstoy
+
         for word1, words2 in model.items():
-            # write all we want to delete into list
-            list_to_del = []
-            for word, quantity in words2.items():
-                if quantity < min_quantity:
-                    list_to_del.append(word)
-            for word in list_to_del:
-                words2.pop(word)
+            model[word1] = {
+                (None if item[1] < min_quantity else item[0]): item[1]
+                for item in words2.items()}
+
+            model[word1].pop(None, 12)
+            # returns 12 instead of throwing exception if there's no None key
+            # why twelve? just random number
     json.dump(model, output_stream, ensure_ascii=False, separators=(',', ':'))
 
 
