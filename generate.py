@@ -12,7 +12,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.12'
+__version__ = '0.1.13'
 
 import sys
 import argparse
@@ -95,7 +95,7 @@ def write_sequence(model, length, first_word=None, stream=sys.stdout):
         stream = sys.stdout
     word = None
     if first_word is not None:
-        write_word(first_word)
+        write_word(first_word, stream)
         length -= 1
         word = first_word
 
