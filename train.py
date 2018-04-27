@@ -132,9 +132,9 @@ def write_model(output_stream, model, min_quantity):
 
     converted_model = defaultdict(lambda: defaultdict(int))
     # Key: first_word, Val: {Key: second_word, Val: quantity1}
-    for pair, quantity in model.items():
-        if pair[1] is not None:
-            converted_model[pair[0]][pair[1]] = quantity
+    for (word1, word2), quantity in model.items():
+        if word2 is not None:
+            converted_model[word1][word2] = quantity
 
     # TODO: time for 'War and Peace' by Leo Tolstoy
     # json.dump([*model.items()], output_stream,
