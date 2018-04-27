@@ -9,11 +9,11 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 import os
 import sys
-from collections import defaultdict
+from collections import defaultdict, Counter
 import argparse
 import json
 import re
@@ -32,11 +32,6 @@ def time_measure(func):
 
 
 WORD_SEPARATOR = ' '  # Const
-
-model = defaultdict(lambda: defaultdict(int))
-
-
-# Key: first_word, Val: {Key: second_word, Val: quantity1}
 
 
 def create_parser():
@@ -59,7 +54,8 @@ def create_parser():
     parser.add_argument('--lc', '-l', action='store_true',
                         help='optional; convert words to lowercase')
     parser.add_argument('--no-cleanup', '-nc', action='store_true',
-                        help='optional; do not remove non-alphabetical symbols')
+                        help='optional; do not remove non-alphabetical '
+                             'symbols')
     parser.add_argument('--min-quantity', '-mq', type=int,
                         help='optional; minimal quantity of word pairs in all '
                              'texts for saving them to the model')
@@ -90,76 +86,63 @@ def process_string(dirty_string, params):
     """
     clean_string = re.sub(r'\s+', ' ', dirty_string)  # replace whitespace
     if params.cleanup:
-        clean_string = re.sub(r'[^ \w]', '', dirty_string)
+        clean_string = re.sub(r'[^ \w]', '', dirty_string)  # TODO remove digits
     if params.lower:
         clean_string = clean_string.lower()
     return clean_string
 
 
-def add_to_dict(word1, word2):
-    """Add the word pair to the model
-
-    In dictionary model, increment value of [word1][word2] by 1 for this string
-    pair if exists, create with value 1 otherwise. If word2 is None, just add
-    word1 into model with empty dictionary key if model[word1] doesn't exist.
-    :param word1: the first word in pair
-    :param word2: the second word in pair or None
-    """
-    global model
-    if word2 is None:
-        model[word1]  # just create first word if not exists
-    else:
-        model[word1][word2] += 1
-
-
 def read_stream(stream, params):
-    """Add word pairs from the input stream into model
+    """Return processed word pairs from the input stream
 
     Read all the text from stream, process it if necessary, split into words,
-    add every word pair into model. Do not close stream!
+    add every word pair into model, return it. Do not close stream!
 
     :param stream: input stream
     :param params: Params class with non-None values of lower and cleanup;
     lower: True if must convert to lowercase, False otherwise;
     cleanup: True if must remove non-alphabetical symbols, False
     otherwise.
+    :return: Counter object that contains all word pairs from the text and
+    their quantities; format: {(word1_str, word2_str): quantity_int}
     """
+    processed_result = Counter()
     if params.lower is None or params.cleanup is None:
         raise TypeError('At least one of the variables in params is None')
     words = []
     for line in stream:
         words += process_string(line, params).split()
-        for i in range(0, len(words) - 1):
-            add_to_dict(words[i], words[i + 1])  # TODO make adding without for
-                                                 # but how?
-            # TODO PyCharm underlines this comment ^^^^^^^ Why, Ks'usha?
+        processed_result.update(zip(words[:-1], words[1:]))
         words = [words[-1]]
-    add_to_dict(words[0], None)  # add last word from stream if has no pairs
+    processed_result.update([(words[0], None)])  # save last word from stream;
+    # we don't want to lose it if it doesn't appear in the text anywhere else
+    return processed_result
 
 
-def write_model(output_stream, min_quantity):
+def write_model(output_stream, model, min_quantity):
     """Remove rare pairs and write model into output_stream
 
-    Remove second words with quantity less than min_quantity and write model
-    into output_stream.
+    Remove pairs of words with quantity less than min_quantity, convert model
+    to "dict of dicts" format  {word1: {word2: quantity}}  and write model to
+    output_stream.
     """
-    global model
     if min_quantity is not None and min_quantity > 1:
+        model = +Counter({pair: -1 if quantity < min_quantity else quantity
+                          for pair, quantity in model.items()})
 
-        # model = {pairs[0]: {
-        #         (None if item[1] < min_quantity else item[0]): item[1]
-        #         for item in pairs[1].items()} for pairs in model.items()}
-        # TODO ^^^^^^^^^^^^^^ that is slower, I've measured time on Tolstoy
+    converted_model = defaultdict(lambda: defaultdict(int))
+    # Key: first_word, Val: {Key: second_word, Val: quantity1}
+    for pair, quantity in model.items():
+        if pair[1] is not None:
+            converted_model[pair[0]][pair[1]] = quantity
 
-        for word1, words2 in model.items():
-            model[word1] = {
-                (None if item[1] < min_quantity else item[0]): item[1]
-                for item in words2.items()}
-
-            model[word1].pop(None, 12)
-            # returns 12 instead of throwing exception if there's no None key
-            # why twelve? just random number
-    json.dump(model, output_stream, ensure_ascii=False, separators=(',', ':'))
+    # TODO: time for 'War and Peace' by Leo Tolstoy
+    # json.dump([*model.items()], output_stream,
+    #           ensure_ascii=False, separators=(',', ':'))
+    # TODO: ^^^^^ train: 1.285303s; write_model: 0.393337s (without conversion)
+    json.dump(converted_model, output_stream, ensure_ascii=False,
+              separators=(',', ':'))
+    # TODO: ^^^^^ train: 1.082625s; write_model: 0.259026s
 
 
 def get_all_files(directory):
@@ -178,16 +161,18 @@ def train():
     input_dir = args.input_dir
     params = Params(args)
 
+    model = Counter()  # [(word1, word2): quantity]
+
     if input_dir is None:
         read_stream(sys.stdin, params)
     else:
         file_list = get_all_files(input_dir)
         for file_path in file_list:
             with open(file_path, 'r') as file:
-                read_stream(file, params)
+                model.update(read_stream(file, params))
     # Output
     with args.model as file:
-        write_model(file, args.min_quantity)
+        write_model(file, model, args.min_quantity)
 
 
 if __name__ == '__main__':
