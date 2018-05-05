@@ -1,15 +1,21 @@
 # coding: utf-8
-"""train.py: create a model using word pairs from given texts.
+"""
+========
+train.py
+========
+Create a model using word pairs from given texts.
+-------------------------------------------------
 Reads given text files, then creates a model file that contains all pairs of
 words from the texts with quantities of their occurrences. The model file can
 be used later in generate.py to create a sequence of words where all adjacent
-words are related in sense (read more in generate.py help)."""
+words are related in sense (read more in generate.py help).
+"""
 
 __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 import os
 import sys
