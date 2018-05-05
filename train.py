@@ -15,7 +15,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 import os
 import sys
@@ -144,8 +144,8 @@ def get_files_list(input_dir):
     :param input_dir: **str** path to the directory with text files, it may
         contain subdirectories with text files, they will be opened too
     """
-    return [open(str(os.path.join(dir, file)), 'r')
-            for dir, subdirs, files in os.walk(input_dir)
+    return [open(str(os.path.join(directory, file)), 'r')
+            for directory, subdirs, files in os.walk(input_dir)
             for file in files if file[0] != '.']
 
 
