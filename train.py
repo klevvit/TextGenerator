@@ -15,7 +15,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.3.5'
+__version__ = '0.4.0'
 
 import os
 import sys
@@ -137,14 +137,17 @@ def write_model(output_stream, model, min_quantity):
     json.dump(converted_model, output_stream, ensure_ascii=False,
               separators=(',', ':'))
 
-def get_all_files(directory):
-    """Return list of paths to all files in directory and all subdirectories"""
-    list_files = []
-    for di, dirs, files in os.walk(directory):
-        for file in files:
-            if file[0] != '.':
-                list_files.append(str(os.path.join(di, file)))
-    return list_files
+
+def get_files_list(input_dir):
+    """Return list of opened streams for all files in dir and all subdirs
+
+    :param input_dir: **str** path to the directory with text files, it may
+        contain subdirectories with text files, they will be opened too
+    """
+    return [open(str(os.path.join(dir, file)), 'r')
+            for dir, subdirs, files in os.walk(input_dir)
+            for file in files if file[0] != '.']
+
 
 @Decorators.time_measure
 def train():
@@ -154,14 +157,18 @@ def train():
     params = Params(args)
 
     model = Counter()  # [(word1, word2): quantity]
-
-    if input_dir is None:
-        read_stream(sys.stdin, params)
-    else:
-        file_list = get_all_files(input_dir)
-        for file_path in file_list:
-            with open(file_path, 'r') as file:
-                model.update(read_stream(file, params))
+    stream_list = []
+    try:
+        if input_dir is None:
+            stream_list = [sys.stdin]
+        else:
+            stream_list = get_files_list(input_dir)
+        for stream in stream_list:
+            model.update(read_stream(stream, params))
+    finally:
+        if input_dir is not None:
+            for stream in stream_list:
+                stream.close()
     # Output
     with args.model as file:
         write_model(file, model, args.min_quantity)
