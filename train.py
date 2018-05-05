@@ -15,7 +15,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 
 import os
 import sys
@@ -130,14 +130,8 @@ def write_model(output_stream, model, min_quantity):
         if word2 is not None:
             converted_model[word1][word2] = quantity
 
-    # TODO: time for 'War and Peace' by Leo Tolstoy
-    # json.dump([*model.items()], output_stream,
-    #           ensure_ascii=False, separators=(',', ':'))
-    # TODO: ^^^^^ train: 1.285303s; write_model: 0.393337s (without conversion)
     json.dump(converted_model, output_stream, ensure_ascii=False,
               separators=(',', ':'))
-    # TODO: ^^^^^ train: 1.082625s; write_model: 0.259026s
-
 
 def get_all_files(directory):
     """Return list of paths to all files in directory and all subdirectories"""
