@@ -17,7 +17,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.14'
+__version__ = '0.1.15'
 
 import sys
 import argparse
@@ -127,8 +127,8 @@ def generate():
         output_stream = args.output
         if output_stream is None:
             output_stream = sys.stdout
-        model = json.load(input_file)
         # Key: first_word,  Val: {Key: second_word, Val: quantity1}
+        model = json.load(input_file)
 
         first_word = deal_with_seed(args.seed, model)
         write_sequence(model, args.length, first_word, output_stream)
@@ -137,10 +137,10 @@ def generate():
     finally:
         if input_file is not None:
             input_file.close()
-        if output_stream is not None and output_stream != sys.stdout:
-            output_stream.close()
         # we may want to print something to sys.stdout after (e.g., execution
         # time), so it mustn't be closed
+        if output_stream is not None and output_stream != sys.stdout:
+            output_stream.close()
 
 
 if __name__ == '__main__':

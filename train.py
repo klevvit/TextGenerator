@@ -15,7 +15,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 
 import os
 import sys
@@ -128,8 +128,8 @@ def write_model(output_stream, model, min_quantity):
         model = Counter({pair: quantity for pair, quantity in model.items() if
                          quantity >= min_quantity})
 
-    converted_model = defaultdict(lambda: defaultdict(int))
     # Key: first_word, Val: {Key: second_word, Val: quantity1}
+    converted_model = defaultdict(lambda: defaultdict(int))
     for (word1, word2), quantity in model.items():
         if word2 is not None:
             converted_model[word1][word2] = quantity
