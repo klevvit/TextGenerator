@@ -9,7 +9,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 import os
 import sys
@@ -17,19 +17,7 @@ from collections import defaultdict, Counter
 import argparse
 import json
 import re
-import time
-
-
-# TODO: add param to functions
-def time_measure(func):
-    def wrapper(*args, **kwargs):
-        t = time.clock()
-        res = func(*args, **kwargs)
-        print(func.__name__ + ':', time.clock() - t)
-        return res
-
-    return wrapper
-
+from utilities import Decorators
 
 WORD_SEPARATOR = ' '  # Const
 
@@ -154,7 +142,7 @@ def get_all_files(directory):
                 list_files.append(str(os.path.join(di, file)))
     return list_files
 
-
+@Decorators.time_measure
 def train():
     # Read parameters
     args = create_parser().parse_args()
