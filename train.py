@@ -15,7 +15,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 
 import os
 import sys
@@ -106,10 +106,14 @@ def read_stream(stream, params):
     words = []
     for line in stream:
         words += process_string(line, params).split()
+        if not words:
+            continue
         processed_result.update(zip(words[:-1], words[1:]))
         words = [words[-1]]
-    processed_result.update([(words[0], None)])  # save last word from stream;
-    # we don't want to lose it if it doesn't appear in the text anywhere else
+    # save last word from stream; we don't want to lose it if it doesn't
+    # appear in the text anywhere else
+    if not words:
+        processed_result.update([(words[0], None)])
     return processed_result
 
 
