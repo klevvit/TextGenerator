@@ -1,6 +1,11 @@
 # coding: utf-8
-"""generate.py: generate a word sequence using model created by train.py
-Reads given model file (you can generate it with train.py) and creates a
+"""
+============
+generate.py
+============
+generate a word sequence using model created by *train.py*
+__________________________________________________________
+Reads given model file (you can generate it with *train.py*) and creates a
 sequence of words. If the seed was not stated, the first word is a random one
 from the texts; all words have equal chances to be the first, no matter how
 often they have appeared in the texts. Every next word is one of the words
@@ -12,7 +17,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.13'
+__version__ = '0.1.14'
 
 import sys
 import argparse
