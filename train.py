@@ -166,6 +166,8 @@ def train():
         for stream in stream_list:
             model.update(read_stream(stream, params))
     finally:
+        # we may want to print something to sys.stdout after (e.g., execution
+        # time), so it mustn't be closed
         if input_dir is not None:
             for stream in stream_list:
                 stream.close()
