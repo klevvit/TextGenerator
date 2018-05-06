@@ -15,7 +15,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.4.3'
+__version__ = '1.0.0'
 
 import os
 import sys
@@ -23,7 +23,6 @@ from collections import defaultdict, Counter
 import argparse
 import json
 import re
-from utilities import Decorators
 
 WORD_SEPARATOR = ' '  # Const
 
@@ -117,7 +116,6 @@ def read_stream(stream, params):
     return processed_result
 
 
-@Decorators.time_measure
 def write_model(output_stream, model, min_quantity):
     """Remove rare pairs and write model into output_stream
 

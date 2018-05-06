@@ -1,7 +1,6 @@
 import time
 
 
-# TODO: add param to functions
 def time_measure(func):
     def wrapper(*args, **kwargs):
         t = time.clock()
