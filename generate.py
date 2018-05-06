@@ -17,7 +17,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = 'Copyright 2018, Lev Kovalenko'
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '0.1.15'
+__version__ = '1.0.0'
 
 import sys
 import argparse
@@ -31,16 +31,16 @@ WORD_SEPARATOR = train.WORD_SEPARATOR  # Const
 def create_parser():
     """Create parser with argparse lib"""
     parser = argparse.ArgumentParser(
-        description='''This program reads given model file (you can generate 
-        it with train.py) and creates a sequence of words. If the seed was not 
-        stated, the first word is a random one from the texts; all words have 
-        equal chances to be the first, no matter how often they have appeared 
-        in the texts. Every next word is one of the words that go after the 
-        previous one in texts; and here the quantity of appearances after that 
-        word is taken into account. If the previous word has no pairs, the 
-        next one wil be selected randomly, like if it would be the first 
+        description='''This program reads given model file (you can generate
+        it with train.py) and creates a sequence of words. If the seed was not
+        stated, the first word is a random one from the texts; all words have
+        equal chances to be the first, no matter how often they have appeared
+        in the texts. Every next word is one of the words that go after the
+        previous one in texts; and here the quantity of appearances after that
+        word is taken into account. If the previous word has no pairs, the
+        next one wil be selected randomly, like if it would be the first
         one.''',
-        epilog='April 2018, Lev Kovalenko', add_help=True)
+        epilog='May 2018, Lev Kovalenko', add_help=True)
     parser.add_argument('--model', '-m', type=argparse.FileType('r'),
                         help='path to the model file; use train.py '
                              'to generate a model')

@@ -1,10 +1,4 @@
 # coding: utf-8
-import os
-import sys
-from collections import defaultdict, Counter
-import argparse
-import json
-import re
 """
 ========
 train.py
@@ -21,7 +15,14 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
+
+import os
+import sys
+from collections import defaultdict, Counter
+import argparse
+import json
+import re
 
 WORD_SEPARATOR = ' '  # Const
 
@@ -34,7 +35,7 @@ def create_parser():
         quantities of their occurrences. The model file can be used later in
         generate.py to create a sequence of words where all adjacent words are
         related in sense (read more in generate.py help).''',
-        epilog='April 2018, Lev Kovalenko', add_help=True)
+        epilog='May 2018, Lev Kovalenko', add_help=True)
     parser.add_argument('--input-dir', '-i',
                         help='optional; path to directory with TEXT FILES '
                              'ONLY, it may contain subdirectories with text '
