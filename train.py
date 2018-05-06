@@ -80,7 +80,7 @@ def process_string(dirty_string, params):
     """
     clean_string = re.sub(r'\s+', ' ', dirty_string)  # replace whitespace
     if params.cleanup:
-        clean_string = re.sub(r'[^ \w]', '', dirty_string)  # TODO remove digits
+        clean_string = re.sub(r'[^ \w]|\d', '', dirty_string)
     if params.lower:
         clean_string = clean_string.lower()
     return clean_string
@@ -117,6 +117,7 @@ def read_stream(stream, params):
     return processed_result
 
 
+@Decorators.time_measure
 def write_model(output_stream, model, min_quantity):
     """Remove rare pairs and write model into output_stream
 
@@ -149,7 +150,6 @@ def get_files_list(input_dir):
             for file in files if file[0] != '.']
 
 
-@Decorators.time_measure
 def train():
     # Read parameters
     args = create_parser().parse_args()
