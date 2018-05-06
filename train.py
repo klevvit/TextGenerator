@@ -15,7 +15,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 import os
 import sys
@@ -116,8 +116,8 @@ def read_stream(stream, params):
     return processed_result
 
 
-def write_model(output_stream, model, min_quantity):
-    """Remove rare pairs and write model into output_stream
+def save_model(output_stream, model, min_quantity):
+    """Remove rare pairs and write model to output_stream
 
     Remove pairs of words with quantity less than min_quantity, convert model
     to "dict of dicts" format  {word1: {word2: quantity}}  and write model to
@@ -133,6 +133,8 @@ def write_model(output_stream, model, min_quantity):
         if word2 is not None:
             converted_model[word1][word2] = quantity
         else:
+            # save last words from streams; we want to save each of them for
+            # generate.py if it doesn't appear in the texts anywhere else
             converted_model[word1]
 
     json.dump(converted_model, output_stream, ensure_ascii=False,
@@ -173,7 +175,7 @@ def train():
                 stream.close()
     # Output
     with args.model as file:
-        write_model(file, model, args.min_quantity)
+        save_model(file, model, args.min_quantity)
 
 
 if __name__ == '__main__':
