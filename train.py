@@ -1,4 +1,10 @@
 # coding: utf-8
+import os
+import sys
+from collections import defaultdict, Counter
+import argparse
+import json
+import re
 """
 ========
 train.py
@@ -15,14 +21,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '1.0.0'
-
-import os
-import sys
-from collections import defaultdict, Counter
-import argparse
-import json
-import re
+__version__ = '1.0.1'
 
 WORD_SEPARATOR = ' '  # Const
 
@@ -30,10 +29,10 @@ WORD_SEPARATOR = ' '  # Const
 def create_parser():
     """Create parser with argparse lib"""
     parser = argparse.ArgumentParser(
-        description='''This program reads given text files, then creates a 
-        model file that contains all pairs of words from the texts with 
-        quantities of their occurrences. The model file can be used later in 
-        generate.py to create a sequence of words where all adjacent words are 
+        description='''This program reads given text files, then creates a
+        model file that contains all pairs of words from the texts with
+        quantities of their occurrences. The model file can be used later in
+        generate.py to create a sequence of words where all adjacent words are
         related in sense (read more in generate.py help).''',
         epilog='April 2018, Lev Kovalenko', add_help=True)
     parser.add_argument('--input-dir', '-i',
