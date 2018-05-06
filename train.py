@@ -15,7 +15,7 @@ __author__ = 'Lev Kovalenko'
 __copyright__ = "Copyright 2018, Lev Kovalenko"
 __credits__ = ['Lev Kovalenko', 'Kseniya Kolesnikova']
 
-__version__ = '1.0.2'
+__version__ = '1.1.0'
 
 import os
 import sys
@@ -111,7 +111,7 @@ def read_stream(stream, params):
         words = [words[-1]]
     # save last word from stream; we don't want to lose it if it doesn't
     # appear in the text anywhere else
-    if not words:
+    if words:
         processed_result.update([(words[0], None)])
     return processed_result
 
@@ -132,6 +132,8 @@ def write_model(output_stream, model, min_quantity):
     for (word1, word2), quantity in model.items():
         if word2 is not None:
             converted_model[word1][word2] = quantity
+        else:
+            converted_model[word1]
 
     json.dump(converted_model, output_stream, ensure_ascii=False,
               separators=(',', ':'))
